@@ -7,6 +7,12 @@ import time
 app_id = "<FILL IN>"
 app_secret = "<FILL IN>" # DO NOT SHARE WITH ANYONE!
 page_id = "cnn"
+# Time needs special care since a) it's in UTC and
+# b) you should set your local time +/- after the date(e.g. 2017-04-12+0500 is EST)
+# b-1) if you don't want to set the local time just write the date(e.g.2017-04-12)
+# c) if you don't want to use cutting off period, just write since = None; until =None
+since = "2016-06-07-0500"#EST
+until = "2016-07-02-0500"#EST
 
 access_token = app_id + "|" + app_secret
 
@@ -41,8 +47,9 @@ def getFacebookPageFeedData(page_id, access_token, num_statuses):
     fields = "/?fields=message,link,created_time,type,name,id," + \
             "comments.limit(0).summary(true),shares,reactions" + \
             ".limit(0).summary(true)"
+    period = "" if since == None and until == None else "&since=%s&until=%s" % (since, until)
     parameters = "&limit=%s&access_token=%s" % (num_statuses, access_token)
-    url = base + node + fields + parameters
+    url = base + node + fields + period + parameters
 
     # retrieve data
     data = json.loads(request_until_succeed(url))
